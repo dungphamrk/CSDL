@@ -1,4 +1,4 @@
-SELECT room, COUNT(*) AS total_students
-FROM Students
-GROUP BY room
-HAVING COUNT(*) > 2;
+select room, COUNT(*) AS total_students
+from Students
+group by room
+having COUNT(*) > 2;

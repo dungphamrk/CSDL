@@ -1,3 +1,3 @@
 select 
-	sector, max(amount) as highest_scholarship
-from scholarships group by Sector;
+	sector, max(scholarship) as highest_scholarship
+from Students group by Sector;
