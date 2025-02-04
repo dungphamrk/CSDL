@@ -1,20 +1,8 @@
 -- Bảng Vendor
-create database Vendor;
-create database Purchase_Order;
-create database Supplies;
-create database Purchase_Order_Details;
-create database Receipt_Note;
-create database Detailed_Receipt_Note;
-create database Delivery_Note;
-create database Detailed_Delivery_Note;
-use Vendor;
-use Purchase_Order;
-use Supplies;
-use Purchase_Order_Details;
-use Receipt_Note;
-use Detailed_Receipt_Note;
-use Delivery_Note;
-use Detailed_Delivery_Note;
+create database hello;
+
+use hello;
+
 CREATE TABLE Vendor (
     Ven_id CHAR(5) PRIMARY KEY,
     Ven_name VARCHAR(100) NOT NULL UNIQUE,
