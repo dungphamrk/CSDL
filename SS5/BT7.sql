@@ -76,6 +76,7 @@ SELECT s.name AS student_name, s.email, c.course_name, e.enrollment_date
 FROM students s
 LEFT JOIN enrollments e ON s.student_id = e.student_id
 LEFT JOIN courses c ON e.course_id = c.course_id
+WHERE s.email IS NULL OR c.fee > 1000000
 UNION
 SELECT s.name AS student_name, s.email, c.course_name, e.enrollment_date
 FROM courses c
@@ -83,6 +84,5 @@ LEFT JOIN enrollments e ON c.course_id = e.course_id
 LEFT JOIN students s ON e.student_id = s.student_id
 WHERE s.email IS NULL OR c.fee > 1000000
 ORDER BY student_name ASC, course_name ASC;	
-
 
 

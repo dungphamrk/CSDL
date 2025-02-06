@@ -123,3 +123,5 @@ FROM Appointments a
 JOIN Patients p ON a.PatientID = p.PatientID
 JOIN Doctors d ON a.DoctorID = d.DoctorID
 ORDER BY a.AppointmentDate ASC;
+
+
