@@ -67,7 +67,7 @@ JOIN inventory i ON p.product_id = i.product_id
 JOIN warehouses w ON i.warehouse_id = w.warehouse_id
 WHERE p.category = 'Electronics'
 ORDER BY i.quantity DESC
-LIMIT 1 OFFSET 1;
+LIMIT 3 OFFSET 1;
 
 
 SELECT p.product_name, s.supplier_name, w.warehouse_name, i.quantity

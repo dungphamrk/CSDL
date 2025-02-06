@@ -82,8 +82,7 @@ FROM courses c
 LEFT JOIN enrollments e ON c.course_id = e.course_id
 LEFT JOIN students s ON e.student_id = s.student_id
 WHERE s.email IS NULL OR c.fee > 1000000
-ORDER BY student_name ASC, course_name ASC;
-
+ORDER BY student_name ASC, course_name ASC;	
 
 
 

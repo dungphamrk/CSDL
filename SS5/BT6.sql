@@ -71,18 +71,10 @@ WHERE g.email IS NOT NULL
 ORDER BY r.RoomType ASC, r.RoomNumber ASC
 LIMIT 5;
 
-SELECT g.FullName, g.Email, r.RoomType, b.CheckInDate 
-FROM Guests g
-JOIN Bookings b ON b.GuestID=g.GuestID
-JOIN Rooms r on r.RoomID =b.RoomID
-WHERE r.RoomType like 'Deluxe' AND (b.CheckInDate between  '2025-01-01' and '2025-01-31')
-Order by b.CheckInDate asc 
-LIMIT 5;
-
 SELECT g.FullName, g.Email
 FROM Guests g
 JOIN Bookings b ON b.GuestID = g.GuestID
-WHERE g.Gender != 'Nữ'
+WHERE g.Gender != 'Nu'
 GROUP BY g.FullName, g.Email
 HAVING COUNT(b.BookingID) >= 2;
 
