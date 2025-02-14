@@ -2,19 +2,18 @@ use sakila;
 
 -- 3
 create view view_film_category as
-select film.film_id, film.title, category.name as category_name
-from film_category 
-join category on category.category_id = film_category.category_id
-join film on film_category.film_id = film.film_id;
+select f.film_id, f.title, c.name as category_name
+from film_category fc 
+join category c on c.category_id = fc.category_id
+join film f on fc.film_id = f.film_id;
 
-select view_film_category.film_id, view_film_category.title, view_film_category.category_name
-from view_film_category;
-
+select * from view_film_category;
 -- 4
 create view view_high_value_customers as
-select customer.customer_id, customer.first_name, customer.last_name, sum(payment.amount) as total_payment
-from customer join payment on payment.customer_id = customer.customer_id
-group by customer.customer_id, customer.first_name, customer.last_name
+select c.customer_id, c.first_name, clast_name, sum(p.amount) as total_payment
+from customer c 
+join payment p on p.customer_id = c.customer_id
+group by c.customer_id, c.first_name, c.last_name
 having total_payment > 100;
 
 select vh.customer_id, vh.first_name, vh.last_name, vh.total_payment
@@ -30,13 +29,15 @@ explain analyze select * from rental
 where rental_date = '2005-06-14';
 
 -- 6
-select * from customer;
+
+
 DELIMITER //
 create procedure CountCustomerRentals(IN customer_id_in smallint, out rental_count int)
 begin
-	select count(rental.rental_id) into rental_count
-    from customer join rental on customer.customer_id = rental.customer_id
-    where customer.customer_id = customer_id_in;
+	select count(r.rental_id) into rental_count
+    from customer c 
+    join rental r on c.customer_id = r.customer_id
+    where c.customer_id = customer_id_in;
 end;
 // DELIMITER //
 
@@ -45,9 +46,9 @@ select @rental_count as rental_count;
 
 -- 7
 DELIMITER //
-create procedure GetCustomerEmail(customer_id_in int)
+create procedure GetCustomerEmail(in_customer_id int)
 begin
-	select email from customer where customer_id = customer_id_in;
+	select email from customer where customer_id = in_customer_id;
 end;
 // DELIMITER //
 

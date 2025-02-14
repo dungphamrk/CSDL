@@ -2,24 +2,25 @@ USE chinook;
 
 -- 2
 create view View_Track_Details as
-select track.TrackId, album.Title as Album_Title, artist.Name as Artist_Name, track.UnitPrice 
-from album join track on album.AlbumId = track.AlbumId
-join artist on album.ArtistId = artist.ArtistId
-where track.UnitPrice > 0.99;
-select View_Track_Details.TrackId, View_Track_Details.Album_Title, View_Track_Details.Artist_Name, View_Track_Details.UnitPrice 
-from View_Track_Details;
+select t.TrackId, album.Title as Album_Title, artist.Name as Artist_Name, t.UnitPrice 
+from album alb
+join track t on alb.AlbumId = t.AlbumId
+join artist art on alb.ArtistId = art.ArtistId
+where t.UnitPrice > 0.99;
+
+select * from View_Track_Details;
 
 -- 3
 create view View_Customer_Invoice as
-select customer.CustomerId, 
-concat(employee.LastName, '', employee.FirstName) as FullName, 
-employee.Email, 
-sum(invoice.Total) as Total_Spending, 
-customer.SupportRepId as Support_Rep
-from customer 
-join employee on customer.SupportRepId = employee.EmployeeId
-join invoice on customer.CustomerId = invoice.CustomerId
-group by customer.CustomerId, employee.LastName, employee.FirstName, employee.Email, customer.SupportRepId
+select c.CustomerId, 
+concat(e.LastName, '', e.FirstName) as FullName, 
+e.Email, 
+sum(i.Total) as Total_Spending, 
+c.SupportRepId as Support_Rep
+from customer c
+join employee e on c.SupportRepId = e.EmployeeId
+join invoice i on c.CustomerId = i.CustomerId
+group by c.CustomerId, e.LastName, e.FirstName, e.Email, c.SupportRepId
 having Total_Spending > 50;
 
 
@@ -28,10 +29,11 @@ from View_Customer_Invoice vc;
 
 -- 4
 create view View_Top_Selling_Tracks as
-select track.TrackId, track.Name as Track_Name, genre.Name as Genre_Name, count(invoiceline.Quantity) as Total_Sales
-from track join invoiceline on invoiceline.TrackId = track.TrackId
-join genre on track.GenreId = genre.GenreId
-group by track.TrackId, track.Name, genre.Name
+select t.TrackId, t.Name as Track_Name, g.Name as Genre_Name, count(i.Quantity) as Total_Sales
+from track t
+join invoiceline i on i.TrackId = t.TrackId
+join genre g on t.GenreId = g.GenreId
+group by t.TrackId, t.Name, g.Name
 having Total_Sales > 10;
 
 select vt.TrackId, vt.Track_Name, vt.Genre_Name, vt.Total_Sales

@@ -2,20 +2,20 @@ USE chinook;
 
 -- 3
 create view View_Album_Artist as
-select album.AlbumId, album.Title as Album_Title, artist.Name as Artist_Name
-from album join artist on artist.ArtistId = album.ArtistId;
+select alb.AlbumId, alb.Title as Album_Title, art.Name as Artist_Name
+from album alb
+join artist art on art.ArtistId = alb.ArtistId;
 
-select View_Album_Artist.AlbumId, View_Album_Artist.Album_Title, View_Album_Artist.Artist_Name
-from View_Album_Artist;
+select * from View_Album_Artist;
 
 -- 4
 create view View_Customer_Spending as
-select customer.CustomerId, customer.FirstName, customer.LastName, customer.Email, sum(invoice.Total) as Total_Spending
-from invoice join customer on invoice.CustomerId = customer.CustomerId
-group by customer.CustomerId, customer.FirstName, customer.LastName, customer.Email;
+select c.CustomerId, c.FirstName, c.LastName, c.Email, sum(i.Total) as Total_Spending
+from invoice i
+join customer c on i.CustomerId = c.CustomerId
+group by c.CustomerId, c.FirstName, c.LastName, c.Email;
 
-select View_Customer_Spending.CustomerId, View_Customer_Spending.FirstName, View_Customer_Spending.LastName, View_Customer_Spending.Email, Total_Spending
-from View_Customer_Spending;
+select * from View_Customer_Spending;
 
 -- 5
 create index idx_Employee_LastName on Employee(LastName);
@@ -32,9 +32,10 @@ select * from track;
 DELIMITER //
 create procedure GetTracksByGenre (in GenreId_in int)
 begin
-select track.TrackId, track.Name as Track_Name, album.Title as Album_Title, artist.Name as Artist_Name
-from album join track on track.AlbumId = album.AlbumId
-join artist on album.ArtistId = artist.ArtistId
+select t.TrackId, t.Name as Track_Name, alb.Title as Album_Title, art.Name as Artist_Name
+from album alb
+join track t on t.AlbumId = alb.AlbumId
+join artist art on alb.ArtistId = art.ArtistId
 where GenreId = GenreId_in;
 end;
 // DELIMITER //
@@ -42,14 +43,15 @@ end;
 call GetTracksByGenre(2);
 
 -- 7
-select * from album;
+
 DELIMITER //
 create procedure GetTrackCountByAlbum (IN p_AlbumId int)
 begin
 declare Total_Tracks int;
 select count(TrackId) into Total_Tracks
-from album join track on track.AlbumId = album.AlbumId
-where album.AlbumId = p_AlbumId;
+from album alb
+join track t on t.AlbumId = alb.AlbumId
+where alb.AlbumId = p_AlbumId;
 select Total_Tracks;
 end;
 // DELIMITER //
