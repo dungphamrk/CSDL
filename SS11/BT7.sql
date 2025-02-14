@@ -24,8 +24,7 @@ group by c.CustomerId, e.LastName, e.FirstName, e.Email, c.SupportRepId
 having Total_Spending > 50;
 
 
-select *
-from View_Customer_Invoice ;
+select * from View_Customer_Invoice ;
 
 -- 4
 create view View_Top_Selling_Tracks as
@@ -36,8 +35,7 @@ join genre g on t.GenreId = g.GenreId
 group by t.TrackId, t.Name, g.Name
 having Total_Sales > 10;
 
-select vt.TrackId, vt.Track_Name, vt.Genre_Name, vt.Total_Sales
-from View_Top_Selling_Tracks vt;
+select * from View_Top_Selling_Tracks ;
 
 -- 5
 create index idx_Track_Name on Track(Name);
