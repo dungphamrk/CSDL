@@ -24,8 +24,8 @@ group by c.CustomerId, e.LastName, e.FirstName, e.Email, c.SupportRepId
 having Total_Spending > 50;
 
 
-select vc.CustomerId, vc.FullName, vc.Email, vc.Total_Spending, vc.Support_Rep
-from View_Customer_Invoice vc;
+select *
+from View_Customer_Invoice ;
 
 -- 4
 create view View_Top_Selling_Tracks as
