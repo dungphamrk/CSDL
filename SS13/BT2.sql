@@ -28,18 +28,22 @@ CREATE PROCEDURE orders(in p_product_id  int , in p_quantity int )
 BEGIN
  DECLARE p_stock INT;
     START TRANSACTION;
-    SELECT stock INTO p_stock
-    FROM products 
-    WHERE product_id = p_product_id;
-    IF p_stock < p_quantity THEN
-        ROLLBACK;
-        SELECT 'khong du hang' AS message;
-    ELSE
-        UPDATE products 
-        SET stock = stock - p_quantity 
-        WHERE product_id = p_product_id;
-        COMMIT;
-        SELECT 'thanh cong' AS message;
+    SELECT stock INTO p_stock FROM products WHERE product_id = p_product_id;
+	IF (SELECT count(product_id) FROM products WHERE product_id = p_product_id ) = 0
+		OR (SELECT count(order_id) FROM orders WHERE quantity = p_quantity ) = 0
+    then
+		SET message_text = 'Sản phẩm không tồn tại';
+	ELSE 
+		IF p_stock < p_quantity THEN
+			ROLLBACK;
+			SELECT 'khong du hang' AS message;
+		ELSE
+			UPDATE products 
+			SET stock = stock - p_quantity 
+			WHERE product_id = p_product_id;
+			COMMIT;
+			SELECT 'thanh cong' AS message;
+		END IF;
     END IF;
 END ;
 // delimiter ; 

@@ -40,16 +40,20 @@ DECLARE c_balance DECIMAL(10,2);
 START TRANSACTION;
 SELECT balance INTO c_balance FROM company_funds ;
 SELECT salary INTO salary_emp FROM employees WHERE emp_id = p_emp_id;
-IF c_balance < salary_emp THEN
- ROLLBACK;
-        SELECT 'khong tien tra luong' AS message;
+if(select count(emp_id) from employees where emp_id = emp_id_in ) = 0
+	or(select count(fund_id) from company_funds where fund_id=fund_id_int) = 0 then 
+	SELECT 'Ma nhan vien ko ton tai' AS message;
+	rollback;
+ELSEIF c_balance < salary_emp THEN
+ROLLBACK;
+	SELECT 'khong du tien tra luong' AS message;
 ELSE
-        UPDATE company_funds 
-        SET balance = balance - salary_emp ;
-        insert into payroll(emp_id,salary,pay_date) value
-        (p_emp_id,salary_emp,current_date());
-        COMMIT;
-        SELECT 'thanh cong' AS message;
+	UPDATE company_funds 
+	SET balance = balance - salary_emp ;
+	insert into payroll(emp_id,salary,pay_date) value
+	(p_emp_id,salary_emp,current_date());
+	COMMIT;
+	SELECT 'thanh cong' AS message;
     END IF;
 END //
 DELIMITER ; 
