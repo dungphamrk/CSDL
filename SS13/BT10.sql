@@ -50,10 +50,8 @@ BEGIN
         VALUES (v_student_id, v_course_id, v_error_message, NOW());
         ROLLBACK;
     END;
-
     -- Bắt đầu transaction
     START TRANSACTION;
-
     -- Kiểm tra sinh viên có tồn tại không
     SELECT student_id INTO v_student_id FROM students WHERE name = p_student_name;
     IF v_student_id IS NULL THEN
@@ -62,7 +60,6 @@ BEGIN
         ROLLBACK;
         LEAVE;
     END IF;
-
     -- Kiểm tra môn học có tồn tại không
     SELECT course_id INTO v_course_id FROM courses WHERE name = p_course_name;
     IF v_course_id IS NULL THEN
@@ -71,7 +68,6 @@ BEGIN
         ROLLBACK;
         LEAVE;
     END IF;
-
     -- Kiểm tra sinh viên đã đăng ký môn học chưa
     IF EXISTS (SELECT 1 FROM enrollments WHERE student_id = v_student_id AND course_id = v_course_id) THEN
         SET v_error_message = 'FAILED: Already enrolled';
@@ -80,7 +76,6 @@ BEGIN
         ROLLBACK;
         LEAVE;
     END IF;
-
     -- Kiểm tra số chỗ trống của môn học
     SELECT available_seats INTO v_available_seats FROM courses WHERE course_id = v_course_id;
     IF v_available_seats <= 0 THEN
@@ -90,13 +85,10 @@ BEGIN
         ROLLBACK;
         LEAVE;
     END IF;
-
     -- Lấy số dư tài khoản của sinh viên
     SELECT balance INTO v_balance FROM student_wallets WHERE student_id = v_student_id;
-    
     -- Lấy học phí của môn học
     SELECT fee INTO v_fee FROM course_fees WHERE course_id = v_course_id;
-    
     -- Kiểm tra số dư tài khoản của sinh viên có đủ tiền không
     IF v_balance < v_fee THEN
         SET v_error_message = 'FAILED: Insufficient balance';
@@ -105,20 +97,15 @@ BEGIN
         ROLLBACK;
         LEAVE;
     END IF;
-
     -- Thực hiện đăng ký môn học
     INSERT INTO enrollments (student_id, course_id, enroll_date) VALUES (v_student_id, v_course_id, NOW());
-
     -- Trừ tiền từ tài khoản sinh viên
     UPDATE student_wallets SET balance = balance - v_fee WHERE student_id = v_student_id;
-
     -- Giảm số lượng chỗ trống của môn học
     UPDATE courses SET available_seats = available_seats - 1 WHERE course_id = v_course_id;
-
     -- Ghi nhận vào lịch sử đăng ký môn học
     INSERT INTO enrollment_history (student_id, course_id, status, log_time) 
     VALUES (v_student_id, v_course_id, 'REGISTERED', NOW());
-
     -- Commit transaction
     COMMIT;
 END //

@@ -46,7 +46,27 @@ CREATE TABLE salary_history (
     reason TEXT,
     FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE
 );
--- cau 2
+INSERT INTO departments (department_name) VALUES 
+('Phòng Marketing'),
+('Phòng Kế Toán');
+
+INSERT INTO employees (name, email, phone, hire_date, department_id) VALUES
+('Lê Văn B', 'levanb@company.com', '0909123456', '2024-02-10', 1),
+('Hoàng Thị D', 'hoangthid@company.com', '0978345678', '2024-01-25', 2),
+('Phạm Quốc E', 'phamquoce@company.com', '0938567890', '2023-12-05', 1);
+
+INSERT INTO attendance (employee_id, check_in_time) VALUES
+(2, '2024-02-17 08:05:00'),
+(3, '2024-02-17 07:55:00'),
+(1, '2024-02-17 08:10:00');
+
+
+INSERT INTO salaries (employee_id, base_salary) VALUES
+(1, 10000000),
+(2, 12000000),
+(3, 9000000);
+
+--  2
 DELIMITER $$
 CREATE TRIGGER check_phone_length_before_update
 BEFORE UPDATE ON employees
@@ -58,7 +78,7 @@ BEGIN
     END IF;
 END $$
 DELIMITER ;
--- cau 3
+-- 3
 CREATE TABLE notifications (
     notification_id INT PRIMARY KEY AUTO_INCREMENT,
     employee_id INT NOT NULL,
@@ -66,7 +86,7 @@ CREATE TABLE notifications (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE
 );
--- cau 4
+-- 4
 DELIMITER $$
 CREATE TRIGGER create_welcome_notification
 AFTER INSERT ON employees
@@ -76,7 +96,7 @@ BEGIN
     VALUES (NEW.employee_id, 'Chào mừng');
 END $$
 DELIMITER ;
--- cau 5
+-- 5
 set autocommit = 0;
 DELIMITER $$
 CREATE PROCEDURE AddNewEmployeeWithPhone(

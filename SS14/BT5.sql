@@ -58,7 +58,44 @@ CREATE TABLE payments (
     status ENUM('Pending', 'Completed', 'Failed') DEFAULT 'Pending',
     FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
 );
--- cau 2
+
+-- Thêm khách hàng
+INSERT INTO customers (name, email, phone, address) VALUES
+('Nguyễn Văn A', 'nguyenvana@example.com', '0912345678', 'Hà Nội'),
+('Trần Thị B', 'tranthib@example.com', '0987654321', 'Hồ Chí Minh'),
+('Lê Văn C', 'levanc@example.com', '0905123456', 'Đà Nẵng');
+
+-- Thêm sản phẩm
+INSERT INTO products (name, price, description) VALUES
+('Laptop Dell', 15000000, 'Laptop Dell Core i7, RAM 16GB, SSD 512GB'),
+('Điện thoại iPhone 13', 20000000, 'iPhone 13 128GB, màu đen'),
+('Tai nghe AirPods', 3500000, 'Tai nghe không dây của Apple');
+
+-- Thêm vào kho hàng
+INSERT INTO inventory (product_id, stock_quantity) VALUES
+(1, 10),
+(2, 20),
+(3, 15);
+
+-- Thêm đơn hàng
+INSERT INTO orders (customer_id, status) VALUES
+(1, 'Completed'),
+(2, 'Pending'),
+(3, 'Completed');
+
+-- Thêm chi tiết đơn hàng
+INSERT INTO order_items (order_id, product_id, quantity, price) VALUES
+(1, 3, 1, 3500000),
+(2, 2, 1, 20000000),
+(3, 1, 1, 15000000);
+
+-- Thêm thanh toán
+INSERT INTO payments (order_id, amount, payment_method, status) VALUES
+(1, 3500000, 'Cash', 'Completed'),
+(2, 20000000, 'Credit Card', 'Pending'),
+(3, 15000000, 'Bank Transfer', 'Completed');
+
+-- 2
 DELIMITER //
 CREATE TRIGGER before_insert_check_payment
 BEFORE INSERT ON payments
@@ -76,7 +113,7 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
--- cau 3
+-- 3
 CREATE TABLE order_logs (
     log_id INT PRIMARY KEY AUTO_INCREMENT,
     order_id INT NOT NULL,
@@ -85,7 +122,7 @@ CREATE TABLE order_logs (
     log_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
 );
--- cau 4
+-- 4
 DELIMITER //
 CREATE TRIGGER after_update_order_status
 AFTER UPDATE ON orders
@@ -98,7 +135,7 @@ BEGIN
 END //
 DELIMITER ;
 set autocommit = 0;
--- cau 5
+-- 5
 DELIMITER //
 CREATE PROCEDURE sp_update_order_status_with_payment(
     IN p_order_id INT,
@@ -127,18 +164,14 @@ BEGIN
     COMMIT;
 END //
 DELIMITER ;
--- cau 6
--- Thêm bản ghi đơn hàng và thanh toán
-INSERT INTO customers (name, email) VALUES ('Nguyen Van A', 'nguyenvana@example.com');
-INSERT INTO orders (customer_id, total_amount) VALUES (1, 100.00);
 
--- Gọi stored procedure để cập nhật trạng thái đơn hàng và thanh toán
+
 CALL sp_update_order_status_with_payment(1, 'Completed', 100.00, 'Credit Card');
--- cau 7
+-- 7
 SELECT * FROM order_logs;
--- cau 8
--- Xóa trigger
+-- 8
+
 DROP TRIGGER IF EXISTS before_insert_check_payment;
 DROP TRIGGER IF EXISTS after_update_order_status;
--- Xóa stored procedure
+
 DROP PROCEDURE IF EXISTS sp_update_order_status_with_payment;
