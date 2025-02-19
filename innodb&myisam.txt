@@ -1,0 +1,27 @@
+    Một table InnoDB sẽ có một hoặc hai file, tùy thuộc vào việc innodb_file_per_table có được bật hay không.
+Cho dù nó được bật hay không, table luôn có file .frm.
+Nếu nó được bật, cũng sẽ có một file .ibd, chứa dữ liệu table và index.
+Nếu không được bật, dữ liệu table và index cho tất cả các table sẽ được lưu trữ trong vùng table hệ thống.
+Do bộ đệm thay đổi, ngay cả khi innodb_file_per_table được kích hoạt, các thay đổi gần đây vẫn chưa được ghi vào file table. Đây là lý do tại sao các CSDL chứa các table InnoDB không thể được khôi phục riêng lẻ. Vì vậy cần bật khôi phục tự động với table InnoDB.
+InnoDB có quy trình khôi phục sự cố tự động. Khi mysql dừng đột ngột, InnoDB có một số kiểm tra nhất định chạy khi khởi động mysql. Phần lớn quá trình khôi phục sự cố này sẽ hoàn tất các thay đổi trước khi xảy ra sự cố. Và cũng sẽ hoàn tác các thay đổi đang diễn ra nhưng chưa được cam kết. Tuy nhiên, đôi khi quá trình này không thành công, đặc biệt nếu InnoDB đang hoạt động khi MySQL không được shutdown đúng cách. Khi đó, MySQL sẽ hoàn toàn không thể khởi động. Và không có CSDL nào có thể truy cập được.
+Ngoài ra, nếu InnoDB gặp sự cố và không thể tự động khôi phục, một số table InnoDB có thể bị hỏng, không thể sửa chữa được. Do đó việc bật sao lưu tự động cho table InnoDB càng quan trọng hơn nữa.
+
+
+    Một table MyISAM có tổng cộng 3 file. Ngoài file .frm mà tất cả các table đều có, còn có file .MYD chứa dữ liệu table. Cùng với đó là file .MYI chứa các index.
+Bởi vì MyISAM lưu trữ tất cả thông tin table trực tiếp trong 3 file của table đó. Nên một table bị lỗi sẽ không ảnh hưởng trực tiếp đến chức năng của các table khác.
+Nếu cần, bạn có thể khôi phục một CSDL đơn lẻ từ Partial VPS Restore. Với điều kiện là tất cả các table trong CSDL đó đều đang sử dụng MyISAM.
+
+
+
+1. Tủ MyISAM (Nhanh nhưng không an toàn lắm)
+Đây là một cái tủ không có khóa.
+Khi bạn muốn lấy đồ chơi, bạn có thể mở cửa tủ thật nhanh và lấy ra ngay.
+Nhưng nếu có nhiều bạn cùng muốn lấy đồ chơi một lúc, thì phải xếp hàng vì chỉ có một người mở tủ được mỗi lần.
+Nếu chẳng may ai đó đẩy ngã tủ, tất cả đồ chơi có thể rơi ra và bị mất, không thể lấy lại được!
+2. Tủ InnoDB (Chậm hơn nhưng an toàn)
+Đây là một cái tủ có khóa và có nhiều ngăn nhỏ bên trong.
+Mỗi bạn có một chìa khóa nhỏ để mở đúng ngăn của mình, nên nhiều bạn có thể lấy đồ cùng lúc mà không cần xếp hàng lâu.
+Nếu chẳng may có ai đó đẩy ngã tủ, tủ có cơ chế tự khóa, giúp đồ chơi bên trong không bị mất.
+Kết luận
+Tủ MyISAM giống như cách lưu trữ dữ liệu nhanh nhưng dễ mất nếu có sự cố.
+Tủ InnoDB thì chậm hơn một chút nhưng bảo vệ dữ liệu tốt hơn và cho phép nhiều người sử dụng cùng lúc.
